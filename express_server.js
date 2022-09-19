@@ -39,8 +39,9 @@ app.get("/urls/:id", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-  console.log(req.body);
-  res.send("Ok");
+  urlDatabase[generateRandomString()] = req.body.longURL;
+  console.log(urlDatabase);
+  res.redirect("/urls/:id");
 });
 
 app.listen(PORT, () => {
@@ -57,5 +58,5 @@ function generateRandomString() {
       Math.random > .5 ? id.push(alphabet[Math.floor(Math.random() * 10)].toUpperCase()): id.push(alphabet[Math.floor(Math.random() * 10)]);
     }
   }
-  return id.join();
+  return id.join("");
 };
