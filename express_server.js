@@ -39,9 +39,17 @@ app.get("/urls/:id", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-  urlDatabase[generateRandomString()] = req.body.longURL;
-  console.log(urlDatabase);
-  res.redirect("/urls/:id");
+  const id = generateRandomString();
+  urlDatabase[id] = req.body.longURL;
+  res.redirect(`/urls/${id}`);
+});
+
+app.get("/urls/u/:id", (req, res) => {
+  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id] };
+  const id = templateVars.id;
+  const longUrl = urlDatabase[id];
+  console.log(longUrl);
+  res.redirect(longUrl);
 });
 
 app.listen(PORT, () => {
