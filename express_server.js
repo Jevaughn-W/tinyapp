@@ -21,6 +21,12 @@ app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 
+// Rendering page associated with route "/URLS"
+app.get("/urls", (req, res) => { 
+  const templateVars = { urls: urlDatabase };
+  res.render("urls_index.ejs", templateVars);
+});
+
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
