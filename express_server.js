@@ -45,10 +45,15 @@ app.post("/urls", (req, res) => {
 });
 
 app.get("/urls/u/:id", (req, res) => {
-  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id] };
-  const id = templateVars.id;
+  const id = req.params.id;
   const longUrl = urlDatabase[id];
   res.redirect(longUrl);
+});
+
+app.post("/urls/:id/delete", (req, res) => {
+  const id = req.params.id;
+  delete urlDatabase[id];
+  res.redirect("/urls");
 });
 
 app.listen(PORT, () => {
