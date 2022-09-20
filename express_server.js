@@ -1,4 +1,5 @@
 const express = require('express');
+const { redirect } = require('express/lib/response');
 const app = express();
 const PORT = 8080;
 
@@ -38,18 +39,21 @@ app.get("/urls/:id", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
+// Shows the list of Urls
 app.post("/urls", (req, res) => {
   const id = generateRandomString();
   urlDatabase[id] = req.body.longURL;
   res.redirect(`/urls/${id}`);
 });
 
+// Redirects from shortened Url to original Url
 app.get("/urls/u/:id", (req, res) => {
   const id = req.params.id;
   const longUrl = urlDatabase[id];
   res.redirect(longUrl);
 });
 
+// Delete functionality
 app.post("/urls/:id/delete", (req, res) => {
   const id = req.params.id;
   delete urlDatabase[id];
@@ -58,6 +62,13 @@ app.post("/urls/:id/delete", (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
+});
+
+// Edit functionality
+app.post("/urls/:id/edit", (req, res) => {
+  const id = req.params.id;
+  urlDatabase[id] = req.body.longURL;
+  res.redirect(`/urls/${id}`);
 });
 
 function generateRandomString() {
