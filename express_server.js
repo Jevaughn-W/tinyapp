@@ -1,5 +1,6 @@
 const express = require('express');
 const { redirect } = require('express/lib/response');
+const cookieParser = require('cookie-parser');
 const app = express();
 const PORT = 8080;
 
@@ -70,6 +71,12 @@ app.post("/urls/:id/edit", (req, res) => {
   urlDatabase[id] = req.body.longURL;
   res.redirect(`/urls/${id}`);
 });
+
+// User log in functionality
+app.post("/login", (req, res) => {
+  res.cookie("user", req.body);
+  res.redirect("/urls");
+})
 
 function generateRandomString() {
   let id =[]
