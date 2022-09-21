@@ -6,6 +6,7 @@ const PORT = 8080;
 
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true}));
+app.use(cookieParser());
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -26,17 +27,19 @@ app.get("/hello", (req, res) => {
 
 // Rendering page associated with route "/URLS"
 app.get("/urls", (req, res) => { 
-  const templateVars = { urls: urlDatabase };
+  console.log(req.cookies);
+  const templateVars = { urls: urlDatabase, cookies: req.cookies };
   res.render("urls_index.ejs", templateVars);
 });
 
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  const templateVars = { cookies: req.cookies };
+  res.render("urls_new", templateVars);
 });
 
 // Rendering pages using request parameters
 app.get("/urls/:id", (req, res) => {
-  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id] };
+  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id], cookies: req.cookies };
   res.render("urls_show", templateVars);
 });
 
@@ -76,7 +79,7 @@ app.post("/urls/:id/edit", (req, res) => {
 app.post("/login", (req, res) => {
   res.cookie("user", req.body);
   res.redirect("/urls");
-})
+});
 
 function generateRandomString() {
   let id =[]
