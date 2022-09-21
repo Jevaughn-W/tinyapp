@@ -18,16 +18,22 @@
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
       </div>
     </div>
-    <span class="navbar-brand">Logged in as: <%= cookies.user.username %>!</span> 
-    <form method="POST", action="/login">
-      <input
-      class="form-control"
-      type="text"
-      name="username"
-      placeholder="Username"
-      style="width: 300px; margin: 1em; display:inline-block;"
-      />
-      <button type="submit" class="btn btn-outline-success" style="display: inline-block; background-color: white !important;">Submit</button>
-    </form>
+    <% if (!cookies.user) { %>
+      <form method="POST", action="/login">
+        <input
+        class="form-control"
+        type="text"
+        name="username"
+        placeholder="Username"
+        style="width: 300px; margin: 1em; display:inline-block;"
+        />
+        <button type="submit" class="btn btn-outline-success" style="display: inline-block; background-color: white !important;">Login</button>
+      </form>      
+      <% } else { %>
+        <span class="navbar-brand">Logged in as: <%= cookies.user.username %>!</span> 
+        <form method="POST", action="/logout">
+          <button type="submit" class="btn btn-outline-danger" style="display: inline-block; background-color: white !important;">Logout</button>
+        </form>
+      <% } %>
   </nav>
 </header>
