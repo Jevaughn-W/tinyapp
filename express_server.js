@@ -81,10 +81,15 @@ app.post("/login", (req, res) => {
   res.redirect("/urls");
 });
 
-// USer logout functionality
+// User logout functionality
 app.post("/logout", (req, res) => {
   res.clearCookie("user", "/logout");
   res.redirect("/urls");
+});
+
+// User registraction
+app.get("/register", (req, res) => {
+  res.render('urls_registration');
 });
 
 function generateRandomString() {
