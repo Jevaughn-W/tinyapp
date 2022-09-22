@@ -1,5 +1,5 @@
 const express = require('express');
-const { redirect } = require('express/lib/response');
+const { redirect, get } = require('express/lib/response');
 const cookieParser = require('cookie-parser');
 const app = express();
 const PORT = 8080;
@@ -27,7 +27,6 @@ app.get("/hello", (req, res) => {
 
 // Rendering page associated with route "/URLS"
 app.get("/urls", (req, res) => { 
-  console.log(req.cookies);
   const templateVars = { urls: urlDatabase, cookies: req.cookies };
   res.render("urls_index.ejs", templateVars);
 });
@@ -92,6 +91,22 @@ app.get("/register", (req, res) => {
   res.render('urls_registration');
 });
 
+// User Registration handling
+const users = {};
+
+app.post("/register", (req, res) => {
+  userId = generateRandomString();
+  res.cookie("userID", userId);
+  users[userId] = {
+    id: userId,
+    email: req.body.userEmail,
+    password: req.body.userPassword
+  };
+  console.log(users);
+  res.redirect("/urls");
+});
+
+
 function generateRandomString() {
   let id =[]
   let alphabet =['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u' ,'v', 'w', 'x', 'y', 'z'];
@@ -104,3 +119,4 @@ function generateRandomString() {
   }
   return id.join("");
 };
+
