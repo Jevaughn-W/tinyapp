@@ -27,12 +27,12 @@
         placeholder="Username"
         style="width: 300px; margin: 1em; display:inline-block;"
         />
-        <button type="submit" class="btn btn-outline-success" style="display: inline-block; background-color: white !important;">Login</button>
+        <button type="submit" class="btn btn-outline-dark" style="display: inline-block;">Login</button>
       </form>      
       <% } else { %>
         <span class="navbar-brand">Logged in as: <%= cookies.user.username %>!</span> 
         <form method="POST", action="/logout">
-          <button type="submit" class="btn btn-outline-danger" style="display: inline-block; background-color: white !important;">Logout</button>
+          <button type="submit" class="btn btn-outline-danger" style="display: inline-block; background-color:">Logout</button>
         </form>
       <% } %>
   </nav>
