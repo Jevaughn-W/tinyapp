@@ -75,9 +75,15 @@ app.post("/urls/:id/edit", (req, res) => {
   res.redirect(`/urls/${id}`);
 });
 
-// User log in functionality
+// User login functionality
 app.post("/login", (req, res) => {
   res.cookie("user", req.body);
+  res.redirect("/urls");
+});
+
+// USer logout functionality
+app.post("/logout", (req, res) => {
+  res.clearCookie("user", "/logout");
   res.redirect("/urls");
 });
 
