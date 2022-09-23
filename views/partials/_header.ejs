@@ -18,7 +18,7 @@
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
       </div>
     </div>
-    <% if (!cookies.user) { %>
+    <% if (!user) { %>
       <form method="POST", action="/login">
         <input
         class="form-control"
@@ -30,7 +30,7 @@
         <button type="submit" class="btn btn-outline-dark" style="display: inline-block;">Login</button>
       </form>      
       <% } else { %>
-        <span class="navbar-brand">Logged in as: <%= cookies.user.username %>!</span> 
+        <span class="navbar-brand">Logged in as: <%= user.email %>!</span> 
         <form method="POST", action="/logout">
           <button type="submit" class="btn btn-outline-danger" style="display: inline-block; background-color:">Logout</button>
         </form>
