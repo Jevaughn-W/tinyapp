@@ -27,18 +27,18 @@ app.get("/hello", (req, res) => {
 
 // Rendering page associated with route "/URLS"
 app.get("/urls", (req, res) => { 
-  const templateVars = { urls: urlDatabase, cookies: req.cookies };
+  const templateVars = { urls: urlDatabase, user: users[req.cookies.userId] };
   res.render("urls_index.ejs", templateVars);
 });
 
 app.get("/urls/new", (req, res) => {
-  const templateVars = { cookies: req.cookies };
+  const templateVars = { user: users[req.cookies.userID] };
   res.render("urls_new", templateVars);
 });
 
 // Rendering pages using request parameters
 app.get("/urls/:id", (req, res) => {
-  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id], cookies: req.cookies };
+  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id], user: users[req.cookies.userId] };
   res.render("urls_show", templateVars);
 });
 
@@ -96,13 +96,25 @@ const users = {};
 
 app.post("/register", (req, res) => {
   userId = generateRandomString();
-  res.cookie("userID", userId);
+  res.cookie("userId", userId);
+
+  if(!req.body.userEmail || !req.body.userPassword) {  // Check for null input in both username and password
+    res.sendStatus(400);
+  };
+  
+  for (let user in users) {  // Check if user email is alreadyin database
+    if (users[user].email === req.body.userEmail) {
+      delete users[user];
+      res.sendStatus(400);
+    } 
+  }
+
   users[userId] = {
     id: userId,
     email: req.body.userEmail,
     password: req.body.userPassword
-  };
-  console.log(users);
+  }
+
   res.redirect("/urls");
 });
 
