@@ -88,6 +88,7 @@ app.post("/logout", (req, res) => {
 
 // User registraction
 app.get("/register", (req, res) => {
+  // const templateVars = { user: users[req.cookies.UserId]}
   res.render('urls_registration');
 });
 
@@ -116,6 +117,12 @@ app.post("/register", (req, res) => {
   }
 
   res.redirect("/urls");
+});
+
+// User log in handling
+app.get("/login", (req, res) => {
+  const templateVars = { user : users[req.cookies.userId]};
+  res.render("urls_login.ejs", templateVars);
 });
 
 
