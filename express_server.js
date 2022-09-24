@@ -32,10 +32,22 @@ const urlDatabase = {
 // });
 
 // Rendering page associated with route "/URLS"
-app.get("/urls", (req, res) => { 
-  const templateVars = { urls: urlDatabase, user: users[req.cookies.userId] };
+app.get("/urls", (req, res) => {
+  const userUrls = urlsForUser(req.cookies.userId); 
+  const templateVars = { urls: userUrls, user: users[req.cookies.userId] };
   res.render("urls_index.ejs", templateVars);
 });
+
+// Functions which carves out user's urls from database
+const urlsForUser = (userId)=> {
+  let userUrls = {};
+  for(let url in urlDatabase) {
+    if(urlDatabase[url].userId === userId) {
+      userUrls[url] = urlDatabase[url];
+    }
+  }
+  return userUrls;
+};
 
 app.get("/urls/new", (req, res) => {
   const templateVars = { user: users[req.cookies.userId] };
@@ -49,7 +61,11 @@ app.get("/urls/new", (req, res) => {
 // Rendering pages using request parameters
 app.get("/urls/:id", (req, res) => {
   const templateVars = { id: req.params.id, longUrl: urlDatabase[req.params.id].longUrl, user: users[req.cookies.userId] };
-  res.render("urls_show", templateVars);
+  if(urlDatabase[req.params.id].userId === req.cookies.userId) {
+    res.render("urls_show", templateVars);
+  } else {
+    res.sendStatus(403);
+  }
 });
 
 // Shows the list of Urls
@@ -77,8 +93,16 @@ app.get("/urls/u/:id", (req, res) => {
 // Delete functionality
 app.post("/urls/:id/delete", (req, res) => {
   const id = req.params.id;
-  delete urlDatabase[id];
-  res.redirect("/urls");
+  if(!urlDatabase[id]) { // Can refactor as a helper function
+    res.sendStatus(403);
+  } else {
+    if(urlDatabase[id].userId === req.cookies.userId) {
+    delete urlDatabase[id];
+    res.redirect("/urls");
+    } else {
+      res.sendStatus(403);
+    }
+  }
 });
 
 app.listen(PORT, () => {
@@ -88,9 +112,17 @@ app.listen(PORT, () => {
 // Edit functionality
 app.post("/urls/:id/edit", (req, res) => {
   const id = req.params.id;
-  urlDatabase[id].longUrl = req.body.longUrl;
-  urlDatabase[id].userId = req.body.userId;
-  res.redirect(`/urls/${id}`);
+  if(!urlDatabase[id]) {
+    res.sendStatus(403);
+  } else {
+    if(urlDatabase[id].userId === req.cookies.userId) {
+      urlDatabase[id].longUrl = req.body.longUrl;
+      urlDatabase[id].userId = req.cookies.userId;
+      res.redirect(`/urls/${id}`);
+    } else {
+      res.sendStatus(403);
+    }
+  }
 });
 
 // User login functionality
