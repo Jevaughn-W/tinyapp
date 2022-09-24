@@ -78,16 +78,18 @@ app.post("/urls/:id/edit", (req, res) => {
 app.post("/login", (req, res) => {
   const loginEmail = req.body.userEmail;
   const loginPassword = req.body.userPassword;
+  let duplicateEmail = true;
 
   userSearch(loginEmail,(user) => {
     if(loginPassword === users[user].password) {
       res.cookie('userId', user);
+      duplicateEmail = false;
       res.redirect("/urls");
     } else {
       res.sendStatus(403);
     }
   });
-  // res.sendStatus(403); // Try implement callback with err and success
+  duplicateEmail === true? res.sendStatus(403): null; // Try implement callback with err and success
 });
 
 // User logout functionality
@@ -98,8 +100,8 @@ app.post("/logout", (req, res) => {
 
 // User registraction
 app.get("/register", (req, res) => {
-  // const templateVars = { user: users[req.cookies.UserId]}
-  res.render('urls_registration');
+  const templateVars = { user: users[req.cookies.UserId]}
+  res.render('urls_registration', templateVars);
 });
 
 // User Registration handling
