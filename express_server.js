@@ -76,13 +76,23 @@ app.post("/urls/:id/edit", (req, res) => {
 
 // User login functionality
 app.post("/login", (req, res) => {
-  res.cookie("user", req.body);
-  res.redirect("/urls");
+  const loginEmail = req.body.userEmail;
+  const loginPassword = req.body.userPassword;
+
+  userSearch(loginEmail,(user) => {
+    if(loginPassword === users[user].password) {
+      res.cookie('userId', user);
+      res.redirect("/urls");
+    } else {
+      res.sendStatus(403);
+    }
+  });
+  // res.sendStatus(403); // Try implement callback with err and success
 });
 
 // User logout functionality
 app.post("/logout", (req, res) => {
-  res.clearCookie("user", "/logout");
+  res.clearCookie('userId', '/logout');
   res.redirect("/urls");
 });
 
@@ -96,32 +106,40 @@ app.get("/register", (req, res) => {
 const users = {};
 
 app.post("/register", (req, res) => {
-  userId = generateRandomString();
+  let userId = generateRandomString();
   res.cookie("userId", userId);
 
   if(!req.body.userEmail || !req.body.userPassword) {  // Check for null input in both username and password
     res.sendStatus(400);
   };
   
-  for (let user in users) {  // Check if user email is alreadyin database
-    if (users[user].email === req.body.userEmail) {
-      delete users[user];
-      res.sendStatus(400);
-    } 
-  }
+  userSearch(req.body.userEmail, ()=> { 
+    res.sendStatus(400);
+    delete users[userId];
+  }); 
 
-  users[userId] = {
-    id: userId,
-    email: req.body.userEmail,
-    password: req.body.userPassword
+  if(res.statusCode !== 400) {
+    users[userId] = {
+      id: userId,
+      email: req.body.userEmail,
+      password: req.body.userPassword
+    }
   }
-
+  console.log(users);
   res.redirect("/urls");
 });
 
+const userSearch = function(userEmail, callback) {
+  for (let user in users) {  // Check if user email is already in database
+    if (users[user].email === userEmail) {
+      callback(user);
+    } 
+  }
+};
+
 // User log in handling
 app.get("/login", (req, res) => {
-  const templateVars = { user : users[req.cookies.userId]};
+  const templateVars = { user : users[req.cookies.userId] };
   res.render("urls_login.ejs", templateVars);
 });
 
