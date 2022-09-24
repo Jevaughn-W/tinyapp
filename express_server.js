@@ -32,8 +32,12 @@ app.get("/urls", (req, res) => {
 });
 
 app.get("/urls/new", (req, res) => {
-  const templateVars = { user: users[req.cookies.userID] };
-  res.render("urls_new", templateVars);
+  const templateVars = { user: users[req.cookies.userId] };
+  if(templateVars.user) {
+    res.render("urls_new", templateVars);
+  } else {
+    res.redirect("/login");
+  }
 });
 
 // Rendering pages using request parameters
@@ -46,14 +50,22 @@ app.get("/urls/:id", (req, res) => {
 app.post("/urls", (req, res) => {
   const id = generateRandomString();
   urlDatabase[id] = req.body.longURL;
-  res.redirect(`/urls/${id}`);
+  if(req.cookies.userId) {
+    res.redirect(`/urls/${id}`);
+  } else {
+    res.send("Please log in to generate a shortened url!")
+  }
 });
 
 // Redirects from shortened Url to original Url
 app.get("/urls/u/:id", (req, res) => {
   const id = req.params.id;
   const longUrl = urlDatabase[id];
-  res.redirect(longUrl);
+  if(longUrl) {
+    res.redirect(longUrl);
+  } else {
+    res.send("Shortened url does not exist");
+  }
 });
 
 // Delete functionality
@@ -100,8 +112,12 @@ app.post("/logout", (req, res) => {
 
 // User registraction
 app.get("/register", (req, res) => {
-  const templateVars = { user: users[req.cookies.UserId]}
-  res.render('urls_registration', templateVars);
+  const templateVars = { user: users[req.cookies.userId]}
+  if(!req.cookies.userId){
+    res.render('urls_registration', templateVars);
+  } else{
+    res.redirect("/urls");
+  }
 });
 
 // User Registration handling
@@ -117,7 +133,7 @@ app.post("/register", (req, res) => {
   
   userSearch(req.body.userEmail, ()=> { 
     res.sendStatus(400);
-    delete users[userId];
+    delete users[userId]; // Doublechek is this line is needed
   }); 
 
   if(res.statusCode !== 400) {
@@ -142,7 +158,11 @@ const userSearch = function(userEmail, callback) {
 // User log in handling
 app.get("/login", (req, res) => {
   const templateVars = { user : users[req.cookies.userId] };
-  res.render("urls_login.ejs", templateVars);
+  if(!req.cookies.userId) {
+    res.render("urls_login.ejs", templateVars);
+  } else {
+    res.redirect("/urls");
+  }
 });
 
 
