@@ -9,21 +9,27 @@ app.use(express.urlencoded({ extended: true}));
 app.use(cookieParser());
 
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  "b2xVn2": {
+    longUrl: "http://www.lighthouselabs.ca",
+    userId: "aJ48lW"
+  },
+  "9sm5xK": {
+    longUrl: "http://www.google.com",
+    userId: "aJ48lW"
+  }
 };
 
-app.get("/", (req, res) => {
-  res.send("Hello!");
-});
+// app.get("/", (req, res) => {
+//   res.send("Hello!");
+// });
 
-app.get("/urls.json", (req, res) => {
-  res.json(urlDatabase);
-});
+// app.get("/urls.json", (req, res) => {
+//   res.json(urlDatabase);
+// });
 
-app.get("/hello", (req, res) => {
-  res.send("<html><body>Hello <b>World</b></body></html>\n");
-});
+// app.get("/hello", (req, res) => {
+//   res.send("<html><body>Hello <b>World</b></body></html>\n");
+// });
 
 // Rendering page associated with route "/URLS"
 app.get("/urls", (req, res) => { 
@@ -42,14 +48,14 @@ app.get("/urls/new", (req, res) => {
 
 // Rendering pages using request parameters
 app.get("/urls/:id", (req, res) => {
-  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id], user: users[req.cookies.userId] };
+  const templateVars = { id: req.params.id, longUrl: urlDatabase[req.params.id].longUrl, user: users[req.cookies.userId] };
   res.render("urls_show", templateVars);
 });
 
 // Shows the list of Urls
 app.post("/urls", (req, res) => {
   const id = generateRandomString();
-  urlDatabase[id] = req.body.longURL;
+  urlDatabase[id] = { longUrl: req.body.longUrl, userId: req.cookies.userId };
   if(req.cookies.userId) {
     res.redirect(`/urls/${id}`);
   } else {
@@ -60,7 +66,7 @@ app.post("/urls", (req, res) => {
 // Redirects from shortened Url to original Url
 app.get("/urls/u/:id", (req, res) => {
   const id = req.params.id;
-  const longUrl = urlDatabase[id];
+  const longUrl = urlDatabase[id].longUrl;
   if(longUrl) {
     res.redirect(longUrl);
   } else {
@@ -82,7 +88,8 @@ app.listen(PORT, () => {
 // Edit functionality
 app.post("/urls/:id/edit", (req, res) => {
   const id = req.params.id;
-  urlDatabase[id] = req.body.longURL;
+  urlDatabase[id].longUrl = req.body.longUrl;
+  urlDatabase[id].userId = req.body.userId;
   res.redirect(`/urls/${id}`);
 });
 
@@ -143,7 +150,6 @@ app.post("/register", (req, res) => {
       password: req.body.userPassword
     }
   }
-  console.log(users);
   res.redirect("/urls");
 });
 
