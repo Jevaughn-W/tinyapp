@@ -46,13 +46,7 @@ const urlsForUser = (userId)=> {
 };
 
 // Finds user by email and return user id
-const getUserbyEmail = function(userEmail, database) {
-  for (let user in database) {  // Check if user email is already in database
-    if (database[user].email === userEmail) {
-      return database[user];
-    } 
-  }
-};
+const { getUserbyEmail } = require('./helpers');
 
 // Generates user id
 function generateRandomString() {
@@ -161,15 +155,17 @@ app.post("/login", (req, res) => {
   const loginEmail = req.body.userEmail;
   const loginPassword = req.body.userPassword;
   const user = getUserbyEmail(loginEmail, users);
-  const userPassword = user.password;
-
+  
   if(user) {
+    const userPassword = user.password;
     if(bcrypt.compareSync(loginPassword, userPassword)) {
       req.session.user_id = user.id;
       res.redirect("/urls");
     } else {
       res.sendStatus(403);
     }
+  } else {
+    res.sendStatus(403);
   }
 });
 
