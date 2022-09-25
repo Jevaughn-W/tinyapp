@@ -46,7 +46,7 @@ const urlsForUser = (userId)=> {
 };
 
 // Finds user by email and return user id
-const { getUserbyEmail } = require('./helpers');
+const { getUserByEmail } = require('./helpers');
 
 // Generates user id
 function generateRandomString() {
@@ -154,7 +154,7 @@ app.post("/urls/:id/edit", (req, res) => {
 app.post("/login", (req, res) => {
   const loginEmail = req.body.userEmail;
   const loginPassword = req.body.userPassword;
-  const user = getUserbyEmail(loginEmail, users);
+  const user = getUserByEmail(loginEmail, users);
   
   if(user) {
     const userPassword = user.password;
@@ -192,7 +192,7 @@ app.post("/register", (req, res) => {
     res.sendStatus(400);
   };
   
-  const user = getUserbyEmail(req.body.userEmail, users);
+  const user = getUserByEmail(req.body.userEmail, users);
 
   if(!user) {
     let userId = generateRandomString();
