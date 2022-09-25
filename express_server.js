@@ -162,10 +162,10 @@ app.post("/login", (req, res) => {
       req.session.user_id = user.id;
       res.redirect("/urls");
     } else {
-      res.sendStatus(403);
+      res.status(403).send("Invalid Credentials");
     }
   } else {
-    res.sendStatus(403);
+    res.status(403).send("Invalid Credentials");
   }
 });
 
@@ -207,7 +207,7 @@ app.post("/register", (req, res) => {
     }
     res.redirect("/urls");
   } else {
-    res.sendStatus(403);
+    res.status(403).send("User email already exists");
   }
 });  
 
