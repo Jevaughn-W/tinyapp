@@ -3,6 +3,7 @@ const { redirect, get } = require('express/lib/response');
 const cookieParser = require('cookie-parser');
 const app = express();
 const PORT = 8080;
+const bcrypt = require("bcryptjs");
 
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true}));
@@ -132,7 +133,7 @@ app.post("/login", (req, res) => {
   let duplicateEmail = true;
 
   userSearch(loginEmail,(user) => {
-    if(loginPassword === users[user].password) {
+    if(bcrypt.compareSync(loginPassword, users[user].password)) {
       res.cookie('userId', user);
       duplicateEmail = false;
       res.redirect("/urls");
@@ -170,6 +171,9 @@ app.post("/register", (req, res) => {
     res.sendStatus(400);
   };
   
+  const password = req.body.userPassword;
+  const hashedPassword = bcrypt.hashSync(password, 10);
+
   userSearch(req.body.userEmail, ()=> { 
     res.sendStatus(400);
     delete users[userId]; // Doublechek is this line is needed
@@ -179,7 +183,7 @@ app.post("/register", (req, res) => {
     users[userId] = {
       id: userId,
       email: req.body.userEmail,
-      password: req.body.userPassword
+      password: hashedPassword
     }
   }
   res.redirect("/urls");
