@@ -4,11 +4,9 @@ TinyApp is a full stack web application built with Node and Express that allows 
 
 ## Final Product
 
-#["Screenshot of urls main page"](https://github.com/Jevaughn-W/tinyapp/blob/main/docs/main_urls_page.
-
+!["Screenshot of urls main page"](https://github.com/Jevaughn-W/tinyapp/blob/main/docs/main_urls_page.png)
 !["Screenshot of edit/delete page"](https://github.com/Jevaughn-W/tinyapp/blob/main/docs/edit-delete_page.png)
-
-!["Screenshot of login page"](https://github.com/Jevaughn-W/tinyapp/blob/main/docs/login_page.pgn)
+!["Screenshot of login page"](https://github.com/Jevaughn-W/tinyapp/blob/main/docs/login_page.png)
 
 ## Dependencies
 
@@ -22,3 +20,5 @@ TinyApp is a full stack web application built with Node and Express that allows 
 
 - Install all dependencies (using the `npm install` command).
 - Run the development web server using the `node express_server.js` command.
+- Asscess the server by using the following url: http://localhost:8080/urls.
+- To end the server side connection after use, press `ctr + c` to cancel the command
