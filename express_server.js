@@ -46,10 +46,10 @@ const urlsForUser = (userId)=> {
 };
 
 // Finds user by email and return user id
-const userSearch = function(userEmail) {
-  for (let user in users) {  // Check if user email is already in database
-    if (users[user].email === userEmail) {
-      return user;
+const getUserbyEmail = function(userEmail, database) {
+  for (let user in database) {  // Check if user email is already in database
+    if (database[user].email === userEmail) {
+      return database[user];
     } 
   }
 };
@@ -160,11 +160,12 @@ app.post("/urls/:id/edit", (req, res) => {
 app.post("/login", (req, res) => {
   const loginEmail = req.body.userEmail;
   const loginPassword = req.body.userPassword;
-  const user = userSearch(loginEmail);
+  const user = getUserbyEmail(loginEmail, users);
+  const userPassword = user.password;
 
   if(user) {
-    if(bcrypt.compareSync(loginPassword, users[user].password)) {
-      req.session.user_id = user;
+    if(bcrypt.compareSync(loginPassword, userPassword)) {
+      req.session.user_id = user.id;
       res.redirect("/urls");
     } else {
       res.sendStatus(403);
@@ -195,7 +196,7 @@ app.post("/register", (req, res) => {
     res.sendStatus(400);
   };
   
-  const user = userSearch(req.body.userEmail);
+  const user = getUserbyEmail(req.body.userEmail, users);
 
   if(!user) {
     let userId = generateRandomString();
